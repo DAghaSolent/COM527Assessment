@@ -2,6 +2,7 @@ package com.example.danialaghaassessment
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -9,29 +10,79 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.ItemizedIconOverlay
+import org.osmdroid.views.overlay.ItemizedOverlay
 import org.osmdroid.views.overlay.OverlayItem
 
 class MainActivity : AppCompatActivity(), LocationListener{
+lateinit var map1: MapView
+lateinit var overlay_items : ItemizedIconOverlay<OverlayItem>
+var longitutde = 0.0
+var latitude = 0.0
+
+
+    val addPOIlauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+
+        val returnIntent: Intent? = it.data
+
+        if(it.resultCode ==  RESULT_OK) {
+            it.data?.apply {
+                val name = this.getStringExtra("com.example.danialaghaassessment.Name")
+                val type = this.getStringExtra("com.example.danialaghaassessment.Type")
+                val description =  this.getStringExtra("com.example.danialaghaassessment.Description")
+
+                val newPOI =  OverlayItem(name, "$type: $description", GeoPoint(latitude, longitutde))
+                overlay_items.addItem(newPOI)
+
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         setContentView(R.layout.activity_main)
         checkPermissions()
 
-        val map1 = findViewById<MapView>(R.id.map1)
+        map1 = findViewById<MapView>(R.id.map1)
 
         map1.controller.setZoom(14.0)
         map1.controller.setCenter(GeoPoint(50.9082, -1.4017))
 
+        overlay_items =  ItemizedIconOverlay(this, arrayListOf<OverlayItem>(), null)
+        map1.overlays.add(overlay_items)
+
         // give the map a default location and zoom of 14
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.addPOI -> {
+
+                val intent = Intent(this, CreatePOIActivity::class.java)
+
+                addPOIlauncher.launch(intent)
+                return true
+            }
+        }
+        return false
     }
 
     fun checkPermissions(){
@@ -76,6 +127,9 @@ class MainActivity : AppCompatActivity(), LocationListener{
         val map1 = findViewById<MapView>(R.id.map1)
         map1.controller.setZoom(14.0)
         map1.controller.setCenter(GeoPoint(newLoc.latitude, newLoc.longitude))
+
+        latitude = newLoc.latitude
+        longitutde = newLoc.longitude
 
         Toast.makeText (this, "Location=${newLoc.latitude},${newLoc.longitude}", Toast.LENGTH_LONG).show()
     }

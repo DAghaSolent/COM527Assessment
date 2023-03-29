@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DanialAghaAssessment</string>
+    <string name="addPOI">Add A Point Of Interest</string>
+    <string name="tvname">Name</string>
+    <string name="tvtype">Type</string>
+    <string name="tvdescripton">Descripton</string>
+    <string name="addPOIbtn">Add Current Location As A Point Of Interest</string>
 </resources>
