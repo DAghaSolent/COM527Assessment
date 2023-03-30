@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/addPOI" android:title="@string/addPOI" />
+    <item android:id="@+id/saveAllPOIs" android:title="Save All Point of Interests" />
 </menu>

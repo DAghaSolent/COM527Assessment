@@ -17,16 +17,22 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedOverlay
 import org.osmdroid.views.overlay.OverlayItem
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), LocationListener{
 lateinit var map1: MapView
 lateinit var overlay_items : ItemizedIconOverlay<OverlayItem>
+var poi_List = ArrayList<POI>()
 var longitutde = 0.0
 var latitude = 0.0
 
@@ -38,12 +44,15 @@ var latitude = 0.0
 
         if(it.resultCode ==  RESULT_OK) {
             it.data?.apply {
-                val name = this.getStringExtra("com.example.danialaghaassessment.Name")
-                val type = this.getStringExtra("com.example.danialaghaassessment.Type")
-                val description =  this.getStringExtra("com.example.danialaghaassessment.Description")
+                val name = this.getStringExtra("com.example.danialaghaassessment.Name").toString()
+                val type = this.getStringExtra("com.example.danialaghaassessment.Type").toString()
+                val description =  this.getStringExtra("com.example.danialaghaassessment.Description").toString()
 
                 val newPOI =  OverlayItem(name, "$type: $description", GeoPoint(latitude, longitutde))
                 overlay_items.addItem(newPOI)
+
+                val newPOIObject = POI(0, name, type, description, latitude, longitutde)
+                poi_List.add(newPOIObject)
 
             }
         }
@@ -81,6 +90,38 @@ var latitude = 0.0
                 addPOIlauncher.launch(intent)
                 return true
             }
+
+            R.id.saveAllPOIs -> {
+                val db  = POIDatabase.getDatabase(application)
+                for (poi in poi_List) {
+                    // Launch the coroutine in the scope of the activity lifecycle
+                    // (when the activity is destroyed, the coroutine will terminate
+                    // as the activity is its parent)
+
+                    lifecycleScope.launch{
+                        // Read in the POI Details from each POI object within the poi_list.
+                        val name = poi.name
+                        val type = poi.type
+                        val description = poi.description
+                        val latitude = poi.latitude
+                        val longitude = poi.longitude
+
+                        // Declare a variable to hold the ID allocated to the new record
+                        var insertId = 0L
+
+                        // Switch to the background to do the insert query
+
+                        withContext(Dispatchers.IO){
+                            val savedPOI = POI(0, name, type, description, latitude, longitutde)
+
+                            insertId = db.poiDAO().insert(savedPOI)
+                        }
+                    }
+                    //Log message that I used to debug my code when tackling Task 3
+                    //Log.d("Point Of Interests:", "${poi}")
+                }
+                poi_List.clear()
+            }
         }
         return false
     }
@@ -100,7 +141,7 @@ var latitude = 0.0
             // note the use of 'as' to perform type casting in Kotlin
             // getSystemService() returns a superclass type of LocationManager,
             // so we need to cast it to LocationManager.
-            val mgr = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val mgr = getSystemService(LOCATION_SERVICE) as LocationManager
 
             mgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
 
