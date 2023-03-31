@@ -134,6 +134,31 @@ var latitude = 0.0
 
                 return true
             }
+            R.id.loadPOIs -> {
+                // Clear the unsaved POIs in the POIs List before loading locally saved POIs
+                poi_List.clear()
+                val db = POIDatabase.getDatabase(application)
+                lifecycleScope.launch {
+
+                    var savedPOIs = listOf<POI>()
+
+                    withContext(Dispatchers.IO){
+                        // Retrieve all Point of Interests from local SQL Database
+                        savedPOIs =  db.poiDAO().getAllPois()
+                    }
+
+                    for(savedPOI in savedPOIs){
+                        val name = savedPOI.name
+                        val type = savedPOI.type
+                        val description = savedPOI.description
+                        val latitude = savedPOI.latitude
+                        val longitude = savedPOI.longitude
+
+                        val tempSavedPOI = OverlayItem(name, type, description, GeoPoint(latitude, longitude))
+                        overlay_items.addItem(tempSavedPOI)
+                    }
+                }
+            }
         }
         return false
     }
