@@ -115,7 +115,7 @@ var latitude = 0.0
                         // Switch to the background to do the insert query
 
                         withContext(Dispatchers.IO){
-                            val savedPOI = POI(0, name, type, description, latitude, longitutde)
+                            val savedPOI = POI(0, name, type, description, latitude, longitude)
 
                             insertId = db.poiDAO().insert(savedPOI)
                         }
