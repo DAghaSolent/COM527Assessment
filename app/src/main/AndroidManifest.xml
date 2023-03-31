@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".CreatePOIActivity" android:label="Create Point Of Interest">
         </activity>
+        <activity android:name=".MyPrefsActivity" android:label="@string/preferences">
+        </activity>
     </application>
 
 </manifest>

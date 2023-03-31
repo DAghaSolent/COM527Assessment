@@ -69,10 +69,13 @@ var latitude = 0.0
         map1.controller.setZoom(14.0)
         map1.controller.setCenter(GeoPoint(50.9082, -1.4017))
 
+        // Setting the map to have a default location if GPS permission has been denied by the user.
+        // Also setting a default zoom of 14 to go with the default gps location.
+
         overlay_items =  ItemizedIconOverlay(this, arrayListOf<OverlayItem>(), null)
         map1.overlays.add(overlay_items)
 
-        // give the map a default location and zoom of 14
+
 
     }
 
@@ -121,6 +124,15 @@ var latitude = 0.0
                     //Log.d("Point Of Interests:", "${poi}")
                 }
                 poi_List.clear()
+            }
+            R.id.preferences -> {
+                // Launch the preferences activity
+
+                val intent = Intent(this, MyPrefsActivity::class.java)
+
+                startActivity(intent)
+
+                return true
             }
         }
         return false
@@ -188,4 +200,37 @@ var latitude = 0.0
     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
 
     }
+
+    override fun onStart(){
+        super.onStart()
+        Log.d("lifecycle_app", "onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+
+        val checkBox = prefs.getBoolean("uploadPoisToWeb", false)
+
+        if(checkBox == true){
+            Log.d("lifecycle_app", "Checkbox Preference has been successfully implemented")
+        }
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d("lifecycle_app", "onStop")
+    }
+
+    override fun onPause(){
+        super.onPause()
+        Log.d("lifecycle_app", "onPause")
+    }
+
+    override fun onDestroy(){
+        super.onDestroy()
+        Log.d("lifecycle_app", "onDestroy")
+    }
+
 }
