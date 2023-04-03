@@ -5,4 +5,5 @@
     <item android:id="@+id/preferences" android:title="Preferences" />
     <item android:id="@+id/loadPOIs" android:title="Load Local Saved POIs" />
     <item android:id="@+id/loadWebPOIs" android:title="Load Web Saved POIs" />
+    <item android:id="@+id/testGlobalCheckbox" android:title="Testing Global Checkbox" />
 </menu>

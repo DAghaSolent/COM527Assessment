@@ -40,7 +40,7 @@ var poi_List = ArrayList<POI>()
 var webPOIList = ArrayList<POI>()
 var longitutde = 0.0
 var latitude = 0.0
-
+var checkbox = false
 
     val addPOIlauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 
@@ -209,6 +209,13 @@ var latitude = 0.0
                 }
 
             }
+            R.id.testGlobalCheckbox -> {
+                if (checkbox) {
+                    Log.d("DEBUG_TAG", "Checkbox is true")
+                } else {
+                    Log.d("DEBUG_TAG", "Checkbox is false")
+                }
+            }
         }
         return false
     }
@@ -290,6 +297,10 @@ var latitude = 0.0
 
         if(checkBox == true){
             Log.d("lifecycle_app", "Checkbox Preference has been successfully implemented")
+            checkbox = true
+        }
+        else if(checkBox == false){
+            checkbox = false
         }
     }
 
