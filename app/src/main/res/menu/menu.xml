@@ -4,4 +4,5 @@
     <item android:id="@+id/saveAllPOIs" android:title="Save All Point of Interests" />
     <item android:id="@+id/preferences" android:title="Preferences" />
     <item android:id="@+id/loadPOIs" android:title="Load Local Saved POIs" />
+    <item android:id="@+id/loadWebPOIs" android:title="Load Web Saved POIs" />
 </menu>

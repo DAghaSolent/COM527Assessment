@@ -28,11 +28,16 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.Result
+import com.github.kittinunf.fuel.json.responseJson
+
 
 class MainActivity : AppCompatActivity(), LocationListener{
 lateinit var map1: MapView
 lateinit var overlay_items : ItemizedIconOverlay<OverlayItem>
 var poi_List = ArrayList<POI>()
+var webPOIList = ArrayList<POI>()
 var longitutde = 0.0
 var latitude = 0.0
 
@@ -137,6 +142,10 @@ var latitude = 0.0
             R.id.loadPOIs -> {
                 // Clear the unsaved POIs in the POIs List before loading locally saved POIs
                 poi_List.clear()
+
+                //clear any markers that might have been loaded from the web to show only local markers
+                overlay_items.removeAllItems()
+
                 val db = POIDatabase.getDatabase(application)
                 lifecycleScope.launch {
 
@@ -159,6 +168,47 @@ var latitude = 0.0
                     }
                 }
             }
+
+            R.id.loadWebPOIs -> {
+                // Clear the unsaved POIs in the POIs List before loading locally saved POIs
+                poi_List.clear()
+
+                //clear any markers that might have been loaded locally to show only web saved markers
+                overlay_items.removeAllItems()
+
+                val url = "http://10.0.2.2:3000/poi/all"
+
+                url.httpGet().responseJson { request, response, result ->
+                    when(result) {
+                        is Result.Success -> {
+                            val jsonArray = result.get().array()
+                            var str = ""
+
+                            for(i in 0 until jsonArray.length()){
+                                val currentPOIObject = jsonArray.getJSONObject(i)
+                                val name =  currentPOIObject.getString("name")
+                                val type =  currentPOIObject.getString("type")
+                                val description = currentPOIObject.getString("description")
+                                val longitude = currentPOIObject.getDouble("lon")
+                                val latitude = currentPOIObject.getDouble("lat")
+
+                                val webPOI = POI(0, name, type, description, latitude, longitude)
+                                webPOIList.add(webPOI)
+                            }
+
+                            for(webPOI in webPOIList){
+                                val tempWebPOI = OverlayItem(webPOI.name, webPOI.type, webPOI.description, GeoPoint(webPOI.latitude, webPOI.longitude))
+                                overlay_items.addItem(tempWebPOI)
+                            }
+                        }
+
+                        is Result.Failure -> {
+                            Toast.makeText(this@MainActivity, result.error.message, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+
+            }
         }
         return false
     }
@@ -180,7 +230,7 @@ var latitude = 0.0
             // so we need to cast it to LocationManager.
             val mgr = getSystemService(LOCATION_SERVICE) as LocationManager
 
-            mgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, this)
+            mgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0f, this)
 
         }
     }

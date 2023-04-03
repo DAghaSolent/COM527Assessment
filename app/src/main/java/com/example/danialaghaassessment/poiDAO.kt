@@ -10,6 +10,9 @@ interface poiDAO {
     @Query("SELECT* FROM poi")
     fun getAllPois(): List <POI>
 
+    @Query("DELETE FROM poi")
+    fun deleteAllPOIs()
+
     @Insert
     fun insert(POI: POI) : Long
 
