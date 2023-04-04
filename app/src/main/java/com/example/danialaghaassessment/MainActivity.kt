@@ -1,6 +1,7 @@
 package com.example.danialaghaassessment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,21 +30,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.fuel.json.responseJson
 
 
 class MainActivity : AppCompatActivity(), LocationListener{
-lateinit var map1: MapView
-lateinit var overlay_items : ItemizedIconOverlay<OverlayItem>
-var poi_List = ArrayList<POI>()
-var webPOIList = ArrayList<POI>()
-var longitutde = 0.0
-var latitude = 0.0
-var checkbox = false
+    lateinit var map1: MapView
+    lateinit var overlay_items : ItemizedIconOverlay<OverlayItem>
+    var poi_List = ArrayList<POI>()
+    var webPOIList = ArrayList<POI>()
+    var longitutde = 0.0
+    var latitude = 0.0
+    var checkbox = false
 
     val addPOIlauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-
 
         val returnIntent: Intent? = it.data
 
@@ -59,6 +60,22 @@ var checkbox = false
                 val newPOIObject = POI(0, name, type, description, latitude, longitutde)
                 poi_List.add(newPOIObject)
 
+                if(checkbox == true ){
+                    val url = "http://10.0.2.2:3000/poi/create"
+                    val createPOIPost = listOf("name" to name, "type" to type, "description" to description, "lat" to newPOIObject.latitude, "lon" to newPOIObject.longitude)
+                    url.httpPost(createPOIPost).response{ request, response, result ->
+                        when(result){
+                            is Result.Success -> {
+                                // If the POST request is successful
+                                Toast.makeText(this@MainActivity, result.get().decodeToString(), Toast.LENGTH_LONG).show()
+                            }
+                            is Result.Failure -> {
+                                // If the POST request failed
+                                Toast.makeText(this@MainActivity, result.error.message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -211,8 +228,10 @@ var checkbox = false
             }
             R.id.testGlobalCheckbox -> {
                 if (checkbox) {
+                    Toast.makeText(this, "Checkbox is checked", Toast.LENGTH_LONG).show()
                     Log.d("DEBUG_TAG", "Checkbox is true")
                 } else {
+                    Toast.makeText(this, "Checkbox is unchecked", Toast.LENGTH_LONG).show()
                     Log.d("DEBUG_TAG", "Checkbox is false")
                 }
             }
@@ -303,6 +322,8 @@ var checkbox = false
             checkbox = false
         }
     }
+    // To keep code concise I know I can just used an else to set the global checkbox to false. But
+    // for better understanding and readability of my code I decided to use an else if statement.
 
     override fun onStop(){
         super.onStop()
