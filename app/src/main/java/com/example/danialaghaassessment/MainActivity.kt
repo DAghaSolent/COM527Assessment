@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
                         when(result){
                             is Result.Success -> {
                                 // If the POST request is successful
-                                Toast.makeText(this@MainActivity, result.get().decodeToString(), Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MainActivity, result.get().decodeToString() + "Uploaded successfully to web", Toast.LENGTH_LONG).show()
                             }
                             is Result.Failure -> {
                                 // If the POST request failed
