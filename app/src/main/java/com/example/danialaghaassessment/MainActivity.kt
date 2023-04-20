@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity(), LocationListener{
                 val type = this.getStringExtra("com.example.danialaghaassessment.Type").toString()
                 val description =  this.getStringExtra("com.example.danialaghaassessment.Description").toString()
 
+                if(name.isNullOrEmpty() || type.isNullOrEmpty() || description.isNullOrEmpty()) {
+                    Toast.makeText(this@MainActivity, "POI not created. Please fill in all fields to create a new POI.", Toast.LENGTH_LONG).show()
+                    return@registerForActivityResult
+                }
+
                 val newPOI =  OverlayItem(name, "$type: $description", GeoPoint(latitude, longitutde))
                 overlay_items.addItem(newPOI)
 
@@ -94,11 +99,21 @@ class MainActivity : AppCompatActivity(), LocationListener{
         // Setting the map to have a default location if GPS permission has been denied by the user.
         // Also setting a default zoom of 14 to go with the default gps location.
 
-        overlay_items =  ItemizedIconOverlay(this, arrayListOf<OverlayItem>(), null)
+        val markerGestureListener = object:ItemizedIconOverlay.OnItemGestureListener<OverlayItem>{
+            override fun onItemLongPress(i: Int, item: OverlayItem) : Boolean
+            {
+                Toast.makeText(this@MainActivity, item.snippet, Toast.LENGTH_SHORT).show()
+                return true
+            }
+            override fun onItemSingleTapUp(i:Int, item: OverlayItem): Boolean
+            {
+                Toast.makeText(this@MainActivity, item.snippet, Toast.LENGTH_SHORT).show()
+                return true
+            }
+        }
+
+        overlay_items =  ItemizedIconOverlay(this, arrayListOf<OverlayItem>(), markerGestureListener)
         map1.overlays.add(overlay_items)
-
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
