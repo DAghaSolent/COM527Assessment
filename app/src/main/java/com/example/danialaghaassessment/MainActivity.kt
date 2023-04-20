@@ -99,11 +99,21 @@ class MainActivity : AppCompatActivity(), LocationListener{
         // Setting the map to have a default location if GPS permission has been denied by the user.
         // Also setting a default zoom of 14 to go with the default gps location.
 
-        overlay_items =  ItemizedIconOverlay(this, arrayListOf<OverlayItem>(), null)
+        val markerGestureListener = object:ItemizedIconOverlay.OnItemGestureListener<OverlayItem>{
+            override fun onItemLongPress(i: Int, item: OverlayItem) : Boolean
+            {
+                Toast.makeText(this@MainActivity, item.snippet, Toast.LENGTH_SHORT).show()
+                return true
+            }
+            override fun onItemSingleTapUp(i:Int, item: OverlayItem): Boolean
+            {
+                Toast.makeText(this@MainActivity, item.snippet, Toast.LENGTH_SHORT).show()
+                return true
+            }
+        }
+
+        overlay_items =  ItemizedIconOverlay(this, arrayListOf<OverlayItem>(), markerGestureListener)
         map1.overlays.add(overlay_items)
-
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -147,6 +157,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
                             insertId = db.poiDAO().insert(savedPOI)
                         }
                     }
+                    
                     //Log message that I used to debug my code when tackling Task 3
                     //Log.d("Point Of Interests:", "${poi}")
                 }
