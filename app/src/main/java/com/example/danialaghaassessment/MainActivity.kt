@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity(), LocationListener{
                 val type = this.getStringExtra("com.example.danialaghaassessment.Type").toString()
                 val description =  this.getStringExtra("com.example.danialaghaassessment.Description").toString()
 
+                if(name.isNullOrEmpty() || type.isNullOrEmpty() || description.isNullOrEmpty()) {
+                    Toast.makeText(this@MainActivity, "POI not created. Please fill in all fields to create a new POI.", Toast.LENGTH_LONG).show()
+                    return@registerForActivityResult
+                }
+
                 val newPOI =  OverlayItem(name, "$type: $description", GeoPoint(latitude, longitutde))
                 overlay_items.addItem(newPOI)
 
