@@ -157,6 +157,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
                             insertId = db.poiDAO().insert(savedPOI)
                         }
                     }
+                    
                     //Log message that I used to debug my code when tackling Task 3
                     //Log.d("Point Of Interests:", "${poi}")
                 }
