@@ -1,4 +1,5 @@
 package com.example.danialaghaassessment
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
@@ -8,7 +9,7 @@ interface poiDAO {
     fun getPoiByID(id: Long): POI
 
     @Query("SELECT* FROM poi")
-    fun getAllPois(): List <POI>
+    fun getAllPois(): LiveData<List<POI>>
 
     @Query("DELETE FROM poi")
     fun deleteAllPOIs()
