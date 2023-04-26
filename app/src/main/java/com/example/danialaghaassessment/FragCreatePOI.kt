@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import org.osmdroid.config.Configuration
@@ -25,10 +26,15 @@ class FragCreatePOI: androidx.fragment.app.Fragment(R.layout.frag_create_poi) {
             val etdescription = view.findViewById<EditText>(R.id.etdescripton)
             val getdescription = etdescription.getText().toString()
 
-            var newPOI = POI(0,getetname, getettype, getdescription,viewModel.latitude, viewModel.longitude)
+            if(getetname.isNullOrEmpty() || getettype.isNullOrEmpty() || getdescription.isNullOrEmpty()) {
+                Toast.makeText(activity, "POI not created. Please fill in all fields to create a new POI.", Toast.LENGTH_LONG).show()
+            }
 
-            viewModel.addPOI(newPOI)
+            else{
+                var newPOI = POI(0,getetname, getettype, getdescription,viewModel.latitude, viewModel.longitude)
 
+                viewModel.addPOI(newPOI)
+            }
         }
     }
 }
