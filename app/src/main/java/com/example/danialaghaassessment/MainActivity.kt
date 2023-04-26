@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
         // Check to see if GPS permission has been granted already
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==  PackageManager.PERMISSION_GRANTED){
             requestLocation()
+            viewModel.permission = true
         } else {
             //If the permission hasn't been granted yet, request it from the user.
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
             0 -> {
                 if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     requestLocation()
+                    viewModel.permission = true
                 }
                 else{
                     AlertDialog.Builder(this)

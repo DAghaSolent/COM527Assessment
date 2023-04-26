@@ -26,14 +26,19 @@ class FragCreatePOI: androidx.fragment.app.Fragment(R.layout.frag_create_poi) {
             val etdescription = view.findViewById<EditText>(R.id.etdescripton)
             val getdescription = etdescription.getText().toString()
 
-            if(getetname.isNullOrEmpty() || getettype.isNullOrEmpty() || getdescription.isNullOrEmpty()) {
-                Toast.makeText(activity, "POI not created. Please fill in all fields to create a new POI.", Toast.LENGTH_LONG).show()
+            if(viewModel.permission == true ){
+                if(getetname.isNullOrEmpty() || getettype.isNullOrEmpty() || getdescription.isNullOrEmpty()) {
+                    Toast.makeText(activity, "POI not created. Please fill in all fields to create a new POI.", Toast.LENGTH_LONG).show()
+                }
+
+                else{
+                    var newPOI = POI(0,getetname, getettype, getdescription,viewModel.latitude, viewModel.longitude)
+
+                    viewModel.addPOI(newPOI)
+                }
             }
-
             else{
-                var newPOI = POI(0,getetname, getettype, getdescription,viewModel.latitude, viewModel.longitude)
-
-                viewModel.addPOI(newPOI)
+                Toast.makeText(activity, "POI not created. Re run the app and accept location permissions.", Toast.LENGTH_LONG).show()
             }
         }
     }

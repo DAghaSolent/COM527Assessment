@@ -16,6 +16,7 @@ import org.osmdroid.views.overlay.OverlayItem
 class FragViewModel(app:Application): AndroidViewModel(app) {
     var longitude = 0.0
     var latitude = 0.0
+    var permission = false
 
     // Get a reference to the database, using the Application object
     var db = POIDatabase.getDatabase(app)
