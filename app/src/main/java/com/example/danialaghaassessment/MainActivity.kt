@@ -199,6 +199,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
                         val tempSavedPOI = OverlayItem(name, type, description, GeoPoint(latitude, longitude))
                         overlay_items.addItem(tempSavedPOI)
                     }
+                    map1.invalidate()
                 }
             }
 
@@ -233,6 +234,7 @@ class MainActivity : AppCompatActivity(), LocationListener{
                                 val tempWebPOI = OverlayItem(webPOI.name, webPOI.type, webPOI.description, GeoPoint(webPOI.latitude, webPOI.longitude))
                                 overlay_items.addItem(tempWebPOI)
                             }
+                            map1.invalidate()
                         }
 
                         is Result.Failure -> {
