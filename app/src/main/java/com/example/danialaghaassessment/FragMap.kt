@@ -47,6 +47,7 @@ class FragMap: androidx.fragment.app.Fragment(R.layout.frag_map_view) {
                 val newPOI = OverlayItem(poi.name, "${poi.type}: ${poi.description}", GeoPoint(poi.latitude, poi.longitude))
                 overlay_items.addItem(newPOI)
             }
+            map1.invalidate()
         })
 
         val markerGestureListener = object:ItemizedIconOverlay.OnItemGestureListener<OverlayItem>{
